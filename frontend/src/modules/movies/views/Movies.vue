@@ -83,6 +83,7 @@ export default {
         }
     },
     mounted(){
+        
         instance.get("/movies/").then((response) => {
             console.log(response);
         }).catch((error) => {
