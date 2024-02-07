@@ -73,7 +73,7 @@ export default {
                 name: '',
                 releaseDate: null,
                 category: '',
-                description: ''
+                description: '' 
             },
             options: [
                 { value: '', text: 'Selecciona una categoría' },
