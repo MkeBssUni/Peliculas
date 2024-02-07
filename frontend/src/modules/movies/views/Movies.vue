@@ -42,16 +42,18 @@
                     </b-col>
                     <b-col cols="12">
                         <b-form-group label-for="category" class="mt-3 input-select">
-                            <b-form-select id="category" v-model="category" :options="options" style="width: 100%;"></b-form-select>
+                            <b-form-select id="category" v-model="category" :options="options"
+                                style="width: 100%;"></b-form-select>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12">
                         <b-form-group label="Sinopsis:" label-for="description" class="mt-3">
                             <b-form-textarea id="description" v-model="description"></b-form-textarea>
                         </b-form-group>
-                    </b-col>                    
+                    </b-col>
                     <b-col cols="6">
-                        <b-button block class="mt-3" variant="outline-success" type="submit" style="width: 100%;">Agregar</b-button>
+                        <b-button block class="mt-3" variant="outline-success" type="submit"
+                            style="width: 100%;">Agregar</b-button>
                     </b-col>
                     <b-col cols="6">
                         <b-button class="mt-3" variant="outline-danger" type="reset" style="width: 100%;">Limpiar</b-button>
@@ -69,16 +71,17 @@ export default {
             form: {
                 name: '',
                 releaseDate: null,
-                category: 'Seleccione una categoría',
+                category: '',
                 description: ''
             },
             options: [
-                {}
+                { value: '', text: 'Selecciona una categoría' },
+                { value: 'Drama', text: 'Drama' },
+                { value: 'Terror', text: 'Terror' }
             ]
         }
     }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
