@@ -65,6 +65,7 @@
 </template>
 
 <script>
+import instance from '../../../config/axios';
 export default {
     data() {
         return {
@@ -80,6 +81,13 @@ export default {
                 { value: 'Terror', text: 'Terror' }
             ]
         }
+    },
+    mounted(){
+        instance.get("/movies/").then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 }
 </script>
