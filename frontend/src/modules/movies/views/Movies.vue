@@ -1,3 +1,33 @@
+<script>
+import instance from '../../../config/axios';
+export default {
+    data() {
+        return {
+            form: {
+                name: '',
+                releaseDate: null,
+                category: '',
+                description: ''
+            },
+            options: [
+                { value: '', text: 'Selecciona una categoría' },
+                { value: 'Drama', text: 'Drama' },
+                { value: 'Terror', text: 'Terror' }
+            ],
+            movies: {}
+
+        }
+    },
+    mounted() {
+        instance.get("/movies/").then((response) => {
+            this.movies = response.data.data;
+        }).catch((error) => {
+            alert("Error al cargar las películas");
+        });
+    }
+}
+</script>
+
 <template>
     <b-container fluid class="px-3">
         <b-row>
@@ -14,14 +44,18 @@
         <b-row>
             <b-col cols="12">
                 <b-row>
-                    <b-col cols="12" md="3" class="mt-3">
-                        <b-card title="Card Title" img-src="https://picsum.photos/600/300/?image=25" img-alt="Image" img-top
-                            tag="article" style="max-width: 20rem;" class="mb-2">
+                    <b-col v-for="movie in movies" :key="movie.id" cols="3" md="3" class="mt-3">
+                        <b-card class="shadow-sm mb-2" :title="movie.name" :img-src="movie.image" img-alt="Image" img-top
+                            tag="article" style="max-width: 20rem; min-height: 15rem;"
+                            :sub-title="movie.category.name"
+                            onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                             <b-card-text>
-                                Some quick example text to build on the card title and make up the bulk of the card's
-                                content.
+                                {{ movie.description }}
                             </b-card-text>
-                            <b-button href="#" variant="primary">Go somewhere</b-button>
+                            <template #footer>
+                                <p> <b-icon icon="calendar-date"></b-icon>
+                                    Fecha de estreno: <strong>{{ movie.releaseDate }}</strong></p>
+                            </template>
                         </b-card>
                     </b-col>
                 </b-row>
@@ -32,23 +66,23 @@
                 <b-row>
                     <b-col cols="6">
                         <b-form-group label="Título:" label-for="name">
-                            <b-form-input id="name" type="text" v-model="name"></b-form-input>
+                            <b-form-input id="name" type="text" v-model="form.name"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="6">
                         <b-form-group label="Año de estreno:" label-for="releaseDate">
-                            <b-form-input id="releaseDate" type="number" v-model="releaseDate"></b-form-input>
+                            <b-form-input id="releaseDate" type="number" v-model="form.releaseDate"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12">
                         <b-form-group label-for="category" class="mt-3 input-select">
-                            <b-form-select id="category" v-model="category" :options="options"
+                            <b-form-select id="category" v-model="form.category" :options="options"
                                 style="width: 100%;"></b-form-select>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12">
                         <b-form-group label="Sinopsis:" label-for="description" class="mt-3">
-                            <b-form-textarea id="description" v-model="description"></b-form-textarea>
+                            <b-form-textarea id="description" v-model="form.description"></b-form-textarea>
                         </b-form-group>
                     </b-col>
                     <b-col cols="6">
@@ -63,34 +97,3 @@
         </b-modal>
     </b-container>
 </template>
-
-<script>
-import instance from '../../../config/axios';
-export default {
-    data() {
-        return {
-            form: {
-                name: '',
-                releaseDate: null,
-                category: '',
-                description: '' 
-            },
-            options: [
-                { value: '', text: 'Selecciona una categoría' },
-                { value: 'Drama', text: 'Drama' },
-                { value: 'Terror', text: 'Terror' }
-            ]
-        }
-    },
-    mounted(){
-        
-        instance.get("/movies/").then((response) => {
-            console.log(response);
-        }).catch((error) => {
-            console.log(error);
-        });
-    }
-}
-</script>
-
-<style scoped></style>

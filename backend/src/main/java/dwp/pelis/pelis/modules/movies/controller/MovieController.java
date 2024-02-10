@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @CrossOrigin(value = {"*"})
 public class MovieController {
-    private final MovieService movieService;
+    private final MovieService movieService;    
 
     @PostMapping(value = "/")
     public ResponseEntity<ResponseApi<Movie>> save(@Validated(MovieDto.Save.class) @RequestBody MovieDto dto){
