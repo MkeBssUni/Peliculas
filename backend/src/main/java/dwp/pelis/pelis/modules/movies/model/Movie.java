@@ -18,16 +18,18 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String description;
+    private String director;
     private int releaseDate;
+    private String description;
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     public void save(MovieDto dto){
         this.name = dto.getName();
-        this.description = dto.getDescription();
+        this.director = dto.getDirector();
         this.releaseDate = dto.getReleaseDate();
+        this.description = dto.getDescription();
         this.category = dto.getCategory();
     }
 }

@@ -6,6 +6,7 @@ import dwp.pelis.pelis.modules.categories.model.ICategoryRepository;
 import dwp.pelis.pelis.modules.movies.model.IMovieRepository;
 import dwp.pelis.pelis.modules.movies.model.Movie;
 import dwp.pelis.pelis.modules.movies.model.MovieDto;
+import dwp.pelis.pelis.modules.movies.model.MovieFilterDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,8 @@ public class MovieService {
         if (category.isEmpty()) return new ResponseApi<>(HttpStatus.NOT_FOUND, true, "Category Not found");
         dto.setCategory(category.get());
 
-        if(dto.getReleaseDate()> LocalDateTime.now().getYear()) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid release date");
+        if (dto.getReleaseDate() < 1000 || dto.getReleaseDate() > 9999) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid release year format");
+        if (dto.getReleaseDate() > LocalDateTime.now().getYear()) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid release year");
 
         Movie newMovie = new Movie();
         newMovie.save(dto);
@@ -40,7 +42,16 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseApi<List<Movie>> getAll(){
-        return new ResponseApi<>(iMovieRepository.findAll(), HttpStatus.OK, false, "List of movies");
+    public ResponseApi<List<Movie>> getAll(MovieFilterDto dto) {
+        if (dto.getStartYear() != null && dto.getEndYear() != null) {
+            if (dto.getStartYear() < 1000 || dto.getStartYear() > 9999 || dto.getEndYear() < 1000 || dto.getEndYear() > 9999) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid year format");
+            if (dto.getStartYear() > dto.getEndYear()) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid release year range");
+            if (dto.getStartYear() > LocalDateTime.now().getYear() || dto.getEndYear() > LocalDateTime.now().getYear()) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid year");
+        }
+        if (dto.getCategory() != null) {
+            Optional<Category> category = iCategoryRepository.findById(dto.getCategory());
+            if (category.isEmpty()) return new ResponseApi<>(HttpStatus.NOT_FOUND, true, "Category Not found");
+        }
+        return new ResponseApi<>(iMovieRepository.findAllFiltered(dto.getName(), dto.getDirector(), dto.getStartYear(), dto.getEndYear(), dto.getCategory()), HttpStatus.OK, false, "Movies found");
     }
 }
