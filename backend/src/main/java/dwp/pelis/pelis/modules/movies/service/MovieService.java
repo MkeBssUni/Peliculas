@@ -48,10 +48,14 @@ public class MovieService {
             if (dto.getStartYear() > dto.getEndYear()) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid release year range");
             if (dto.getStartYear() > LocalDateTime.now().getYear() || dto.getEndYear() > LocalDateTime.now().getYear()) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid year");
         }
+
         if (dto.getCategory() != null) {
             Optional<Category> category = iCategoryRepository.findById(dto.getCategory());
             if (category.isEmpty()) return new ResponseApi<>(HttpStatus.NOT_FOUND, true, "Category Not found");
         }
-        return new ResponseApi<>(iMovieRepository.findAllFiltered(dto.getName(), dto.getDirector(), dto.getStartYear(), dto.getEndYear(), dto.getCategory()), HttpStatus.OK, false, "Movies found");
+
+        if (!dto.getOrder().equalsIgnoreCase("asc") && !dto.getOrder().equalsIgnoreCase("desc") && !dto.getOrder().equalsIgnoreCase("default")) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid order");
+
+        return new ResponseApi<>(iMovieRepository.findAllFiltered(dto.getName(), dto.getDirector(), dto.getStartYear(), dto.getEndYear(), dto.getCategory(), dto.getOrder()), HttpStatus.OK, false, "Movies found");
     }
 }

@@ -15,6 +15,10 @@ public interface IMovieRepository extends JpaRepository<Movie, Long> {
             + "(COALESCE(:director, '') = '' OR m.director LIKE %:director%) AND "
             + "(COALESCE(:startYear, 0) = 0 OR m.releaseDate >= :startYear) AND "
             + "(COALESCE(:endYear, 0) = 0 OR m.releaseDate <= :endYear) AND "
-            + "(COALESCE(:categoryId, 0) = 0 OR m.category.id = :categoryId)")
-    List<Movie> findAllFiltered(String name, String director, Integer startYear, Integer endYear, Long categoryId);
+            + "(COALESCE(:categoryId, 0) = 0 OR m.category.id = :categoryId)"
+            + "ORDER BY "
+            + "CASE WHEN LOWER(:order) = 'asc' THEN m.releaseDate END ASC, "
+            + "CASE WHEN LOWER(:order) = 'desc' THEN m.releaseDate END DESC, "
+            + "CASE WHEN LOWER(:order) = 'default' THEN m.id END DESC")
+    List<Movie> findAllFiltered(String name, String director, Integer startYear, Integer endYear, Long categoryId, String order);
 }

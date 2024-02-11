@@ -26,7 +26,7 @@ public class MovieController {
     }
 
     @PostMapping(value = "/all")
-    public ResponseEntity<ResponseApi<List<Movie>>> getAll(@RequestBody MovieFilterDto dto){
+    public ResponseEntity<ResponseApi<List<Movie>>> getAll(@Validated(MovieFilterDto.Get.class)@RequestBody MovieFilterDto dto){
         ResponseApi<List<Movie>> responseApi = movieService.getAll(dto);
         return new ResponseEntity<>(responseApi, responseApi.getStatus());
     }
