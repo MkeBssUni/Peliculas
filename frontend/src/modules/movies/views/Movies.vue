@@ -14,8 +14,8 @@ export default {
             filterDto: {
                 name: '',
                 director: '',
-                startYear: 1900,
-                endYear: 1950,
+                startYear: null,
+                endYear: null,
                 category: null,
                 order: 'default'
             },
