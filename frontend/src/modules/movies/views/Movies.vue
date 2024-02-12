@@ -14,8 +14,8 @@ export default {
             filterDto: {
                 name: '',
                 director: '',
-                startYear: null,
-                endYear: null,
+                startYear: 1900,
+                endYear: 1950,
                 category: null,
                 order: 'default'
             },
@@ -106,9 +106,9 @@ export default {
                         inputEndYear.classList.add('is-invalid');
                         errorMessages.endYear = 'El año de fin no puede ser negativo';
                         showErrors.endYear = true;
-                    }else if(endYear>startYear && startYear != null && endYear != null){
+                    }else if(endYear<startYear){
                         inputEndYear.classList.add('is-invalid');
-                        errorMessages.endYear = 'El año de fin no puede ser mayor al año de inicio';
+                        errorMessages.endYear = 'El año de fin no puede ser menor al año de inicio';
                         showErrors.endYear = true;
                     
                     }else {
@@ -152,7 +152,6 @@ export default {
         },
         getMovies() {
             instance.post("/movies/all", this.filterDto).then((response) => {
-                console.log(response.data.data)
                 this.movies = response.data.data;
             }).catch((error) => {
                 alert("Error al cargar las películas");
@@ -211,6 +210,7 @@ export default {
                         <b-form-input id="startYear" @input="validateInput('startYear')"
                         type="number" v-model.trim="filterDto.startYear"></b-form-input>
                     </b-form-group>
+
                     <b-form-group label="Y año:" label-for="endYear" class="mt-1"
                         :state="!showErrors.endYear" :invalid-feedback="errorMessages.endYear">
                         <b-form-input id="endYear" @input="validateInput('endYear')"
@@ -257,6 +257,8 @@ export default {
                             </template>
                         </b-card>
                     </b-col>
+                    <img src="../../../assets/noMovies.png" alt="notFound" v-if="movies.length == 0">
+
                 </b-row>
             </b-col>
         </b-row>
