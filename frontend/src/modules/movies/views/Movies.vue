@@ -195,7 +195,6 @@ export default {
             if (this.showErrors.name || this.showErrors.releaseDate || this.showErrors.category || this.showErrors.description || this.showErrors.directorForm || (this.form.category.id == '')) return;
              
             instance.post("/movies/", this.form).then((response) => {
-                console.log(response.data);
                 this.getMovies();
             }).catch((error) => {
                 alert("Error al agregar la película");
