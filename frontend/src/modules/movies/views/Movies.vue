@@ -5,6 +5,7 @@ export default {
         return {
             form: {
                 name: '',
+                director: '',
                 releaseDate: null,
                 category: {
                     id: ''
@@ -23,17 +24,23 @@ export default {
             movies: {},
             errorMessages: {
                 name: '',
-                releaseDate: '',
+                director: '',
+                directorForm: '',
+                releaseDateForm: '',
                 category: '',
-                description: '',
+                categoryForm: '',
+                descriptionForm: '',
                 startYear: '',
                 endYear: ''
             },
             showErrors: {
-                name: false,
-                releaseDate: false,
+                nameForm: false,
+                director: false,
+                directorForm: false,
+                releaseDateForm: false,
                 category: false,
-                description: false,
+                categoryForm: false,
+                descriptionForm: false,
                 startYear: false,
                 endYear: false
             }
@@ -44,39 +51,71 @@ export default {
             return year <= new Date().getFullYear()
         },
         validateInput(input) {
-            const { name, releaseDate, category, description } = this.form;
+            const { name, releaseDate, category, description, director } = this.form;
             const { startYear, endYear } = this.filterDto;
             const { errorMessages, showErrors } = this;
             switch (input) {
                 case 'name':
-                    const input = document.getElementById('name');
+                    const input = document.getElementById('nameForm');
                     if (name.length < 5) {
                         input.classList.add('is-invalid');
-                        errorMessages.name = 'El nombre es requerido';
-                        showErrors.name = true;
+                        errorMessages.nameForm = 'El nombre es requerido';
+                        showErrors.nameForm = true;
                     } else {
                         input.classList.remove('is-invalid');
                         input.classList.add('is-valid');
-                        errorMessages.name = '';
-                        showErrors.name = false;
+                        errorMessages.nameForm = '';
+                        showErrors.nameForm = false;
+                    }
+                    break;
+
+                case 'description':
+                    const inputDescription = document.getElementById('descriptionForm');
+                    if (description.length < 10) {
+                        inputDescription.classList.add('is-invalid');
+                        errorMessages.descriptionForm = 'La descripción debe tener al menos 10 caracteres';
+                        showErrors.descriptionForm = true;
+                    } else {
+                        inputDescription.classList.remove('is-invalid');
+                        inputDescription.classList.add('is-valid');
+                        errorMessages.descriptionForm = '';
+                        showErrors.descriptionForm = false;
+                    }
+                    break;
+
+                case 'director':
+                    const inputDirector = document.getElementById('directorForm');
+                    if (director.length < 5) {
+                        inputDirector.classList.add('is-invalid');
+                        errorMessages.directorForm = 'El director es requerido';
+                        showErrors.directorForm = true;
+                    } else {
+                        inputDirector.classList.remove('is-invalid');
+                        inputDirector.classList.add('is-valid');
+                        errorMessages.directorForm = '';
+                        showErrors.directorForm = false;
                     }
                     break;
 
                 case 'releaseDate':
-                    const inputRelease = document.getElementById('releaseDate');
-                    if (releaseDate == 0) {
+                    const inputRelease = document.getElementById('releaseDateForm');
+                    if (releaseDate == '') {
                         inputRelease.classList.add('is-invalid');
-                        errorMessages.releaseDate = 'El año de estreno es requerido';
-                        showErrors.releaseDate = true;
+                        errorMessages.releaseDateForm = 'El año de estreno es requerido';
+                        showErrors.releaseDateForm = true;
                     } else if (!this.notThisYear(releaseDate)) {
                         inputRelease.classList.add('is-invalid');
-                        errorMessages.releaseDate = 'El año de estreno no puede ser mayor al año actual';
-                        showErrors.releaseDate = true;
+                        errorMessages.releaseDateForm = 'El año de estreno no puede ser mayor al año actual';
+                        showErrors.releaseDateForm = true;
+                    }else if(releaseDate<0){
+                        inputRelease.classList.add('is-invalid');
+                        errorMessages.releaseDateForm = 'El año de estreno no puede ser negativo';
+                        showErrors.releaseDateForm = true;
                     } else {
                         inputRelease.classList.remove('is-invalid');
                         inputRelease.classList.add('is-valid');
-                        errorMessages.releaseDate = '';
-                        showErrors.releaseDate = false;
+                        errorMessages.releaseDateForm = '';
+                        showErrors.releaseDateForm = false;
                     }
                     break;
                 case 'startYear':
@@ -119,33 +158,15 @@ export default {
                     break;
 
                 case 'category':
-                    const inputCategory = document.getElementById('category');
-                    if (category.id == null) {
+                    const inputCategory = document.getElementById('categoryForm');
+                    if (category.id == '') {
                         inputCategory.classList.add('is-invalid');
-                        errorMessages.category = 'La categoría es requerida';
-                        showErrors.category = true;
+                        errorMessages.categoryForm = 'La categoría es requerida';
+                        showErrors.categoryForm = true;
                     } else {
                         inputCategory.classList.remove('is-invalid');
                         errorMessages.category = '';
                         showErrors.category = false;
-                    }
-                    break;
-
-                case 'description':
-                    const inputDescription = document.getElementById('description');
-                    if (description == '') {
-                        inputDescription.classList.add('is-invalid');
-                        errorMessages.description = 'La descripción es requerida';
-                        showErrors.description = true;
-                    } else if (description.length < 10) {
-                        inputDescription.classList.add('is-invalid');
-                        errorMessages.description = 'La descripción debe tener al menos 10 caracteres';
-                        showErrors.description = true;
-                    } else {
-                        inputDescription.classList.remove('is-invalid');
-                        inputDescription.classList.add('is-valid');
-                        errorMessages.description = '';
-                        showErrors.description = false;
                     }
                     break;
             }
@@ -165,7 +186,16 @@ export default {
             });
         },
         addMovie() {
+            this.validateInput('name');
+            this.validateInput('releaseDate');
+            this.validateInput('category');
+            this.validateInput('description');
+            this.validateInput('director');
+
+            if (this.showErrors.name || this.showErrors.releaseDate || this.showErrors.category || this.showErrors.description || this.showErrors.directorForm || (this.form.category.id == '')) return;
+             
             instance.post("/movies/", this.form).then((response) => {
+                console.log(response.data);
                 this.getMovies();
             }).catch((error) => {
                 alert("Error al agregar la película");
@@ -185,6 +215,7 @@ export default {
         resetForm() {
             this.form = {
                 name: '',
+                director: '',
                 releaseDate: null,
                 category: {
                     id: ''
@@ -215,7 +246,7 @@ export default {
                                     <b-form-input id="name" type="text" v-model.trim="filterDto.name"
                                         @keyup.enter="getMovies()"></b-form-input>
                                 </b-form-group>
-                                <b-form-group label="Buscar por director:" label-for="name" class="mt-3">
+                                <b-form-group label="Buscar por director:" label-for="director" class="mt-3">
                                     <b-form-input id="director" type="text" v-model.trim="filterDto.director"
                                         @keyup.enter="getMovies()"></b-form-input>
                                 </b-form-group>
@@ -307,28 +338,29 @@ export default {
             <b-form>
                 <b-row>
                     <b-col cols="12">
-                        <b-form-group label="Título:" label-for="name" :state="!showErrors.name"
+                        <b-form-group label="Título:" label-for="nameForm" :state="!showErrors.name"
                             :invalid-feedback="errorMessages.name">
-                            <b-form-input id="name" type="text" v-model.trim="form.name"
+                            <b-form-input id="nameForm" type="text" v-model.trim="form.name"
                                 @input="validateInput('name')"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-2">
-                        <b-form-group label="Director:" label-for="director">
-                            <b-form-input id="director" type="text" v-model.trim="form.director"></b-form-input>
+                        <b-form-group label="Director:" label-for="directorForm" :state="!showErrors.directorForm" :invalid-feedback="errorMessages.directorForm">
+                            <b-form-input @input="validateInput('director')" id="directorForm" type="text" v-model.trim="form.director"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-2">
-                        <b-form-group label="Año de estreno:" label-for="releaseDate" :state="!showErrors.releaseDate"
-                            :invalid-feedback="errorMessages.releaseDate">
-                            <b-form-input @input="validateInput('releaseDate')" id="releaseDate" type="number"
+                        <b-form-group label="Año de estreno:" label-for="releaseDateForm" :state="!showErrors.releaseDateForm"
+                            :invalid-feedback="errorMessages.releaseDateForm">
+                            <b-form-input @input="validateInput('releaseDate')" id="releaseDateForm" type="number"
                                 v-model.trim="form.releaseDate"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-4">
-                        <b-form-group label-for="category">
-                            <b-form-select id="category" v-model.trim="form.category.id" @input="validateInput('category')"
+                        <b-form-group label-for="categoryForm">
+                            <b-form-select id="categoryForm" v-model.trim="form.category.id"
                                 :state="!showErrors.category" :invalid-feedback="errorMessages.category"
+                                @change="validateInput('category')"
                                 :options="options.map(option => ({ text: option.name, value: option.id }))"
                                 class="input-select">
                                 <option value="" disabled>Selecciona una categoría...</option>
@@ -336,10 +368,8 @@ export default {
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-4">
-                        <b-form-group label="Sinopsis:" label-for="description">
-                            <b-form-textarea id="description" @input="validateInput('description')"
-                                :state="!showErrors.description" :invalid-feedback="errorMessages.description"
-                                v-model.trim="form.description"></b-form-textarea>
+                        <b-form-group label="Sinopsis:" label-for="descriptionForm" :state="!showErrors.descriptionForm" :invalid-feedback="errorMessages.descriptionForm">
+                            <b-form-textarea id="descriptionForm" @input="validateInput('description')" v-model.trim="form.description"></b-form-textarea>
                         </b-form-group>
                     </b-col>
                     <b-col cols="6">
@@ -350,7 +380,7 @@ export default {
                     </b-col>
                     <b-col cols="6">
                         <b-button block class="mt-4 d-flex justify-content-between" variant="outline-success" type="submit" @click="addMovie()"
-                            :disabled="(showErrors.name || showErrors.releaseDate || showErrors.category || showErrors.description)"
+                            :disabled="(showErrors.name || showErrors.releaseDate || showErrors.category || showErrors.description || showErrors.directorForm ||(form.category.id=='') )"
                             style="width: 100%;">
                             Agregar
                             <b-icon icon="plus-circle" font-scale="1"></b-icon>
