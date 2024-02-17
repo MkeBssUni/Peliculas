@@ -107,7 +107,7 @@ export default {
                         inputRelease.classList.add('is-invalid');
                         errorMessages.releaseDateForm = 'El año de estreno no puede ser mayor al año actual';
                         showErrors.releaseDateForm = true;
-                    }else if(releaseDate<0){
+                    } else if (releaseDate < 0) {
                         inputRelease.classList.add('is-invalid');
                         errorMessages.releaseDateForm = 'El año de estreno no puede ser negativo';
                         showErrors.releaseDateForm = true;
@@ -193,7 +193,7 @@ export default {
             this.validateInput('director');
 
             if (this.showErrors.name || this.showErrors.releaseDate || this.showErrors.category || this.showErrors.description || this.showErrors.directorForm || (this.form.category.id == '')) return;
-             
+
             instance.post("/movies/", this.form).then((response) => {
                 this.getMovies();
             }).catch((error) => {
@@ -221,7 +221,11 @@ export default {
                 },
                 description: '',
             }
-        }
+        },
+        handleDrop(event){
+            event.preventDefault();
+            this.addMovie();
+        },
     },
     mounted() {
         this.getMovies();
@@ -299,10 +303,10 @@ export default {
             </b-col>
         </b-row>
         <b-row>
-            <b-col cols="12" md="9">
+            <b-col cols="12" md="8">
                 <h3 class="mt-5">Catálogo de películas disponibles</h3>
             </b-col>
-            <b-col cols="12" md="3" class="mt-3 mt-md-5">
+            <b-col cols="12" md="4" class="mt-3 mt-md-5">
                 <b-button variant="outline-success" @click="$bvModal.show('modal-1')" style="width: 100%;"
                     class="d-flex justify-content-between">
                     Agregar película
@@ -311,26 +315,90 @@ export default {
             </b-col>
         </b-row>
         <b-row>
-            <b-col v-for="movie in movies" :key="movie.id" cols="12" md="6" lg="3" class="mt-5">
-                <b-card class="shadow-sm mb-2" :title="movie.name" onmouseover="this.style.transform='scale(1.1)'"
-                    onmouseout="this.style.transform='scale(1)'">
-                    <h6>{{ movie.director }}</h6>
-                    <b-card-sub-title>
-                        {{ movie.category.name }}
-                    </b-card-sub-title>
-                    <b-card-text class="mt-2">
-                        {{ movie.description }}
-                    </b-card-text>
-                    <template #footer>
-                        <p>
-                            <b-icon icon="calendar"></b-icon>
-                            Fecha de estreno: <strong>{{ movie.releaseDate }}</strong>
-                        </p>
-                    </template>
-                </b-card>
+            <b-col cols="8">
+                <div class="drag-container" style="background-color: #f9f9f9; border-radius: 8px;" @dragover.prevent @drop="handleDrop">
+                    <b-row class="m-1">
+                        <b-col v-for="movie in movies" :key="movie.id" cols="12" md="6" lg="4" class="mt-5">
+                            <b-card class="shadow-sm mb-2" :title="movie.name"
+                                onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"
+                                style="height: 18rem;">
+                                <h6>{{ movie.director }}</h6>
+                                <b-card-sub-title>
+                                    {{ movie.category.name }}
+                                </b-card-sub-title>
+                                <b-card-text class="mt-2">
+                                    {{ movie.description }}
+                                </b-card-text>
+                                <template #footer>
+                                    <p>
+                                        <b-icon icon="calendar"></b-icon>
+                                        Fecha de estreno: <strong>{{ movie.releaseDate }}</strong>
+                                    </p>
+                                </template>
+                            </b-card>
+                        </b-col>
+                        <b-col cols="12" class="my-5 d-flex justify-content-center" v-if="movies.length == 0">
+                            <img src="../../../assets/noMovies.png" alt="Imágenes no encontradas" class="img">
+                        </b-col>
+                    </b-row>
+                </div>
             </b-col>
-            <b-col cols="12" class="my-5 d-flex justify-content-center" v-if="movies.length == 0">
-                <img src="../../../assets/noMovies.png" alt="Imágenes no encontradas" class="img">
+            <b-col cols="4">
+                <b-card class="mt-5 p-3">
+                    <b-card-title class="text-center">Agregar nueva película</b-card-title>
+                    <p class="text-center my-3" style="color: gray; font-size: smaller;">
+                        (Llena correctamente los campos para agregar una nueva película y arrástrala al catálogo)
+                    </p>
+                    <b-form>
+                        <b-card draggable="true"
+                        class="drag-item"
+                        >
+                            <b-row>
+                                <b-col cols="12">
+                                    <b-form-group label="Título:" label-for="nameForm" :state="!showErrors.name"
+                                        :invalid-feedback="errorMessages.name">
+                                        <b-form-input id="nameForm" type="text" v-model.trim="form.name"
+                                            @input="validateInput('name')"></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12" class="mt-2">
+                                    <b-form-group label="Director:" label-for="directorForm"
+                                        :state="!showErrors.directorForm" :invalid-feedback="errorMessages.directorForm">
+                                        <b-form-input @input="validateInput('director')" id="directorForm" type="text"
+                                            v-model.trim="form.director"></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12" class="mt-2">
+                                    <b-form-group label="Año de estreno:" label-for="releaseDateForm"
+                                        :state="!showErrors.releaseDateForm"
+                                        :invalid-feedback="errorMessages.releaseDateForm">
+                                        <b-form-input @input="validateInput('releaseDate')" id="releaseDateForm"
+                                            type="number" v-model.trim="form.releaseDate"></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12" class="mt-4">
+                                    <b-form-group label-for="categoryForm">
+                                        <b-form-select id="categoryForm" v-model.trim="form.category.id"
+                                            :state="!showErrors.category" :invalid-feedback="errorMessages.category"
+                                            @change="validateInput('category')"
+                                            :options="options.map(option => ({ text: option.name, value: option.id }))"
+                                            class="input-select">
+                                            <option value="" disabled>Selecciona una categoría...</option>
+                                        </b-form-select>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="12" class="mt-4">
+                                    <b-form-group label="Sinopsis:" label-for="descriptionForm"
+                                        :state="!showErrors.descriptionForm"
+                                        :invalid-feedback="errorMessages.descriptionForm">
+                                        <b-form-textarea id="descriptionForm" @input="validateInput('description')"
+                                            v-model.trim="form.description"></b-form-textarea>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+                        </b-card>
+                    </b-form>
+                </b-card>
             </b-col>
         </b-row>
         <b-modal hide-footer id="modal-1" title="Agregar nueva película">
@@ -344,22 +412,23 @@ export default {
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-2">
-                        <b-form-group label="Director:" label-for="directorForm" :state="!showErrors.directorForm" :invalid-feedback="errorMessages.directorForm">
-                            <b-form-input @input="validateInput('director')" id="directorForm" type="text" v-model.trim="form.director"></b-form-input>
+                        <b-form-group label="Director:" label-for="directorForm" :state="!showErrors.directorForm"
+                            :invalid-feedback="errorMessages.directorForm">
+                            <b-form-input @input="validateInput('director')" id="directorForm" type="text"
+                                v-model.trim="form.director"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-2">
-                        <b-form-group label="Año de estreno:" label-for="releaseDateForm" :state="!showErrors.releaseDateForm"
-                            :invalid-feedback="errorMessages.releaseDateForm">
+                        <b-form-group label="Año de estreno:" label-for="releaseDateForm"
+                            :state="!showErrors.releaseDateForm" :invalid-feedback="errorMessages.releaseDateForm">
                             <b-form-input @input="validateInput('releaseDate')" id="releaseDateForm" type="number"
                                 v-model.trim="form.releaseDate"></b-form-input>
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-4">
                         <b-form-group label-for="categoryForm">
-                            <b-form-select id="categoryForm" v-model.trim="form.category.id"
-                                :state="!showErrors.category" :invalid-feedback="errorMessages.category"
-                                @change="validateInput('category')"
+                            <b-form-select id="categoryForm" v-model.trim="form.category.id" :state="!showErrors.category"
+                                :invalid-feedback="errorMessages.category" @change="validateInput('category')"
                                 :options="options.map(option => ({ text: option.name, value: option.id }))"
                                 class="input-select">
                                 <option value="" disabled>Selecciona una categoría...</option>
@@ -367,19 +436,23 @@ export default {
                         </b-form-group>
                     </b-col>
                     <b-col cols="12" class="mt-4">
-                        <b-form-group label="Sinopsis:" label-for="descriptionForm" :state="!showErrors.descriptionForm" :invalid-feedback="errorMessages.descriptionForm">
-                            <b-form-textarea id="descriptionForm" @input="validateInput('description')" v-model.trim="form.description"></b-form-textarea>
+                        <b-form-group label="Sinopsis:" label-for="descriptionForm" :state="!showErrors.descriptionForm"
+                            :invalid-feedback="errorMessages.descriptionForm">
+                            <b-form-textarea id="descriptionForm" @input="validateInput('description')"
+                                v-model.trim="form.description"></b-form-textarea>
                         </b-form-group>
                     </b-col>
                     <b-col cols="6">
-                        <b-button class="mt-4 d-flex justify-content-between" variant="outline-danger" type="reset" @click="resetForm()" style="width: 100%;">
+                        <b-button class="mt-4 d-flex justify-content-between" variant="outline-danger" type="reset"
+                            @click="resetForm()" style="width: 100%;">
                             Limpiar
                             <b-icon icon="trash" font-scale="1"></b-icon>
                         </b-button>
                     </b-col>
                     <b-col cols="6">
-                        <b-button block class="mt-4 d-flex justify-content-between" variant="outline-success" type="submit" @click="addMovie()"
-                            :disabled="(showErrors.name || showErrors.releaseDate || showErrors.category || showErrors.description || showErrors.directorForm ||(form.category.id=='') )"
+                        <b-button block class="mt-4 d-flex justify-content-between" variant="outline-success" type="submit"
+                            @click="addMovie()"
+                            :disabled="(showErrors.name || showErrors.releaseDate || showErrors.category || showErrors.description || showErrors.directorForm || (form.category.id == ''))"
                             style="width: 100%;">
                             Agregar
                             <b-icon icon="plus-circle" font-scale="1"></b-icon>
