@@ -1,5 +1,6 @@
 <script>
 import instance from '../../../config/axios';
+
 export default {
     data() {
         return {
@@ -223,11 +224,11 @@ export default {
                 description: '',
             }
         },
-        handleDrop(event){
+        handleDrop(event) {
             event.preventDefault();
             this.addMovie();
         },
-        handleScroll(){
+        handleScroll() {
             if (window.scrollY > 30) {
                 this.showFilters = false;
             } else {
@@ -253,7 +254,7 @@ export default {
                 <b-form>
                     <b-card v-show="showFilters">
                         <template #header>
-                            <h5 class="mb-0">Filtros avanzados</h5>
+                            <h5 class="mb-0" id="header-filters">Filtros avanzados</h5>
                         </template>
                         <b-row>
                             <b-col cols="12" md="4">
@@ -328,26 +329,27 @@ export default {
         </b-row>
         <b-row>
             <b-col cols="8">
-                <div class="drag-container" style="background-color: #f9f9f9; border-radius: 8px;" @dragover.prevent @drop="handleDrop">
+                <div class="drag-container" style="background-color: #f9f9f9; border-radius: 8px;" @dragover.prevent
+                    @drop="handleDrop">
                     <b-row class="m-1">
                         <b-col v-for="movie in movies" :key="movie.id" cols="12" md="6" lg="4" class="mt-5">
-                            <b-card class="shadow-sm mb-2" :title="movie.name"
-                                onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"
-                                style="height: 18rem;">
-                                <h6>{{ movie.director }}</h6>
-                                <b-card-sub-title>
-                                    {{ movie.category.name }}
-                                </b-card-sub-title>
-                                <b-card-text class="mt-2">
-                                    {{ movie.description }}
-                                </b-card-text>
-                                <template #footer>
-                                    <p>
-                                        <b-icon icon="calendar"></b-icon>
-                                        Fecha de estreno: <strong>{{ movie.releaseDate }}</strong>
-                                    </p>
-                                </template>
-                            </b-card>
+                                <b-card class="shadow-sm mb-2" :title="movie.name" :key="movie.id"
+                                    onmouseover="this.style.transform='scale(1.1)'"
+                                    onmouseout="this.style.transform='scale(1)'" style="height: 18rem;">
+                                    <h6>{{ movie.director }}</h6>
+                                    <b-card-sub-title>
+                                        {{ movie.category.name }}
+                                    </b-card-sub-title>
+                                    <b-card-text class="mt-2">
+                                        {{ movie.description }}
+                                    </b-card-text>
+                                    <template #footer>
+                                        <p>
+                                            <b-icon icon="calendar"></b-icon>
+                                            Fecha de estreno: <strong>{{ movie.releaseDate }}</strong>
+                                        </p>
+                                    </template>
+                                </b-card>
                         </b-col>
                         <b-col cols="12" class="my-5 d-flex justify-content-center" v-if="movies.length == 0">
                             <img src="../../../assets/noMovies.png" alt="Imágenes no encontradas" class="img">
@@ -362,9 +364,7 @@ export default {
                         (Llena correctamente los campos para agregar una nueva película y arrástrala al catálogo)
                     </p>
                     <b-form>
-                        <b-card draggable="true"
-                        class="drag-item"
-                        >
+                        <b-card draggable="true" class="drag-item">
                             <b-row>
                                 <b-col cols="12">
                                     <b-form-group label="Título:" label-for="nameForm" :state="!showErrors.name"
