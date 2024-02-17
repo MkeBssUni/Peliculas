@@ -43,7 +43,8 @@ export default {
                 descriptionForm: false,
                 startYear: false,
                 endYear: false
-            }
+            },
+            showFilters: true
         }
     },
     methods: {
@@ -226,10 +227,21 @@ export default {
             event.preventDefault();
             this.addMovie();
         },
+        handleScroll(){
+            if (window.scrollY > 30) {
+                this.showFilters = false;
+            } else {
+                this.showFilters = true;
+            }
+        }
     },
     mounted() {
+        window.addEventListener("scroll", this.handleScroll);
         this.getMovies();
         this.getCategories();
+    },
+    beforeDestroy() {
+        window.removeEventListener("scroll", this.handleScroll);
     }
 }
 </script>
@@ -239,7 +251,7 @@ export default {
         <b-row>
             <b-col cols="12" class="mt-5 px-3">
                 <b-form>
-                    <b-card>
+                    <b-card v-show="showFilters">
                         <template #header>
                             <h5 class="mb-0">Filtros avanzados</h5>
                         </template>
