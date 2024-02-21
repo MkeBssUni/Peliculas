@@ -44,7 +44,7 @@ export default {
             console.log('There was an error when trying to solve the Captcha.');
             console.log(err);
         },
-        verifyCaptcha(solution) {
+        async verifyCaptcha(solution) {
             return instance.post("/captcha/verify?solution=" + solution)
                 .then(response => response.data)
                 .catch(error => {
