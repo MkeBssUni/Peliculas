@@ -45,7 +45,8 @@ export default {
                 startYear: false,
                 endYear: false
             },
-            showFilters: true
+            showFilters: true,
+            lastScrollPosition: 0
         }
     },
     methods: {
@@ -229,10 +230,18 @@ export default {
             this.addMovie();
         },
         handleScroll() {
-            if (window.scrollY > 30) {
-                this.showFilters = false;
-            } else {
-                this.showFilters = true;
+            const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+            if(Math.abs(currentScrollPosition - this.lastScrollPosition)<30){
+                return;
+            }
+            this.showFilters = currentScrollPosition < this.lastScrollPosition;
+            
+            this.lastScrollPosition = currentScrollPosition;
+            if(this.showFilters){
+                console.log("se muestra el filtro")
+            }else{
+                console.log("se oculta el filtro")
             }
         }
     },
