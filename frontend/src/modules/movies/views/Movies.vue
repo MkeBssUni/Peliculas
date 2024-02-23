@@ -230,18 +230,13 @@ export default {
             this.addMovie();
         },
         handleScroll() {
+            let componentHeight = this.$refs.advancedFilters.clientHeight;
             const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-            if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 30) {
-                return;
-            }
-            this.showFilters = currentScrollPosition < this.lastScrollPosition;
-
-            this.lastScrollPosition = currentScrollPosition;
-            if (this.showFilters) {
-                console.log("se muestra el filtro")
-            } else {
-                console.log("se oculta el filtro")
+            if(currentScrollPosition>(componentHeight+2) && this.showFilters){
+                this.showFilters = false;
+            } else if(currentScrollPosition<(componentHeight+2) && !this.showFilters){
+                this.showFilters = true;
             }
         }
     },
@@ -258,8 +253,7 @@ export default {
 
 <template>
     <b-container fluid class="p-4">
-        <!-- filters and search form -->
-        <b-row>
+        <b-row ref="advancedFilters">
             <b-col cols="12">
                 <b-form>
                     <b-card v-show="showFilters">
@@ -334,7 +328,6 @@ export default {
                 </b-form>
             </b-col>
         </b-row>
-        <!-- movies catalog title and add button -->
         <b-row>
             <b-col cols="12" md="8">
                 <h3 class="mt-5">Catálogo de películas disponibles</h3>
