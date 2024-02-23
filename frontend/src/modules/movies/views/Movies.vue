@@ -231,7 +231,6 @@ export default {
         },
         handleScroll() {
             let componentHeight = this.$refs.advancedFilters.clientHeight;
-            console.log("esto es lo que mide el bisne ese: ", componentHeight)
             const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
             if(currentScrollPosition>(componentHeight+2) && this.showFilters){
