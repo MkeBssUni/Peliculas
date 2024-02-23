@@ -232,15 +232,15 @@ export default {
         handleScroll() {
             const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-            if(Math.abs(currentScrollPosition - this.lastScrollPosition)<30){
+            if (Math.abs(currentScrollPosition - this.lastScrollPosition) < 30) {
                 return;
             }
             this.showFilters = currentScrollPosition < this.lastScrollPosition;
-            
+
             this.lastScrollPosition = currentScrollPosition;
-            if(this.showFilters){
+            if (this.showFilters) {
                 console.log("se muestra el filtro")
-            }else{
+            } else {
                 console.log("se oculta el filtro")
             }
         }
@@ -274,7 +274,8 @@ export default {
                                 </b-form-group>
                             </b-col>
                             <b-col cols="12" sm="6" md="4" order="1" order-md="4">
-                                <b-form-group label="Buscar por director:" label-for="director" class="mt-3 mt-sm-0 mt-md-3">
+                                <b-form-group label="Buscar por director:" label-for="director"
+                                    class="mt-3 mt-sm-0 mt-md-3">
                                     <b-form-input id="director" type="text" v-model.trim="filterDto.director"
                                         @keyup.enter="getMovies()"></b-form-input>
                                 </b-form-group>
@@ -311,23 +312,23 @@ export default {
                                     </b-form-select>
                                 </b-form-group>
                             </b-col>
-                            
-                                <b-col cols="6" md="4" class="mt-4 mb-2" order="5">
-                                    <b-button variant="outline-primary" @click="getMovies()" style="width: 100%;"
-                                        :disabled="showErrors.startYear || showErrors.endYear"
-                                        class="d-flex justify-content-between">
-                                        Buscar y aplicar
-                                        <b-icon icon="search"></b-icon>
-                                    </b-button>
-                                </b-col>
-                                <b-col cols="6" md="4" class="mt-4 mb-2" order="5">
-                                    <b-button variant="outline-danger" type="reset" @click="cleanFilters()"
-                                        style="width: 100%;" class="d-flex justify-content-between">
-                                        Limpiar
-                                        <b-icon icon="trash"></b-icon>
-                                    </b-button>
-                                </b-col>
-                            
+
+                            <b-col cols="6" md="4" class="mt-4 mb-2" order="5">
+                                <b-button variant="outline-primary" @click="getMovies()" style="width: 100%;"
+                                    :disabled="showErrors.startYear || showErrors.endYear"
+                                    class="d-flex justify-content-between">
+                                    Buscar y aplicar
+                                    <b-icon icon="search"></b-icon>
+                                </b-button>
+                            </b-col>
+                            <b-col cols="6" md="4" class="mt-4 mb-2" order="5">
+                                <b-button variant="outline-danger" type="reset" @click="cleanFilters()" style="width: 100%;"
+                                    class="d-flex justify-content-between">
+                                    Limpiar
+                                    <b-icon icon="trash"></b-icon>
+                                </b-button>
+                            </b-col>
+
                         </b-row>
                     </b-card>
                 </b-form>
@@ -351,25 +352,27 @@ export default {
                 <div class="drag-container mb-3 pb-3" style="background-color: #f9f9f9; border-radius: 8px;"
                     @dragover.prevent @drop="handleDrop">
                     <b-row class="m-1">
-                        <b-col v-for="movie in movies" :key="movie.id" cols="12" md="6" lg="4" class="mt-4">
-                            <b-card class="shadow-sm mb-2" :title="movie.name" :key="movie.id"
-                                onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"
-                                style="height: 18rem;">
-                                <h6>{{ movie.director }}</h6>
-                                <b-card-sub-title>
-                                    {{ movie.category.name }}
-                                </b-card-sub-title>
-                                <b-card-text class="mt-2">
-                                    {{ movie.description }}
-                                </b-card-text>
-                                <template #footer>
-                                    <p>
-                                        <b-icon icon="calendar"></b-icon>
-                                        Fecha de estreno: <strong>{{ movie.releaseDate }}</strong>
-                                    </p>
-                                </template>
-                            </b-card>
-                        </b-col>
+                        <TransitionGroup name="fadeDown" tag="div" class="row">
+                            <b-col v-for="movie in movies" :key="movie.id" cols="12" md="6" lg="4" class="mt-4">
+                                <b-card class="shadow-sm mb-2" :title="movie.name" :key="movie.id"
+                                    onmouseover="this.style.transform='scale(1.1)'"
+                                    onmouseout="this.style.transform='scale(1)'" style="height: 18rem;">
+                                    <h6>{{ movie.director }}</h6>
+                                    <b-card-sub-title>
+                                        {{ movie.category.name }}
+                                    </b-card-sub-title>
+                                    <b-card-text class="mt-2">
+                                        {{ movie.description }}
+                                    </b-card-text>
+                                    <template #footer>
+                                        <p>
+                                            <b-icon icon="calendar"></b-icon>
+                                            Fecha de estreno: <strong>{{ movie.releaseDate }}</strong>
+                                        </p>
+                                    </template>
+                                </b-card>
+                            </b-col>
+                        </TransitionGroup>
                         <b-col cols="12" class="my-5 d-flex justify-content-center" v-if="movies.length == 0">
                             <img src="../../../assets/noMovies.png" alt="Imágenes no encontradas" class="img">
                         </b-col>
@@ -413,7 +416,7 @@ export default {
                                             :state="!showErrors.category" :invalid-feedback="errorMessages.category"
                                             @change="validateInput('category')"
                                             :options="options.map(option => ({ text: option.name, value: option.id }))"
-                                            class="input-select">
+                                            class="form-select">
                                             <option value="" disabled>Selecciona una categoría...</option>
                                         </b-form-select>
                                     </b-form-group>
@@ -461,7 +464,7 @@ export default {
                             <b-form-select id="categoryForm" v-model.trim="form.category.id" :state="!showErrors.category"
                                 :invalid-feedback="errorMessages.category" @change="validateInput('category')"
                                 :options="options.map(option => ({ text: option.name, value: option.id }))"
-                                class="input-select">
+                                class="form-select">
                                 <option value="" disabled>Selecciona una categoría...</option>
                             </b-form-select>
                         </b-form-group>
