@@ -11,8 +11,8 @@ import java.util.Optional;
 public interface IMovieRepository extends JpaRepository<Movie, Long> {
     Optional<Movie> findByNameIgnoreCase(String name);
     @Query(value = "SELECT m FROM Movie m WHERE "
-            + "(COALESCE(:name, '') = '' OR m.name LIKE %:name%) AND "
-            + "(COALESCE(:director, '') = '' OR m.director LIKE %:director%) AND "
+            + "(COALESCE(:name, '') = '' OR LOWER(m.name) LIKE %:name%) AND "
+            + "(COALESCE(:director, '') = '' OR LOWER(m.director) LIKE %:director%) AND "
             + "(COALESCE(:startYear, 0) = 0 OR m.releaseDate >= :startYear) AND "
             + "(COALESCE(:endYear, 0) = 0 OR m.releaseDate <= :endYear) AND "
             + "(COALESCE(:categoryId, 0) = 0 OR m.category.id = :categoryId)"

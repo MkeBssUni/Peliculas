@@ -56,6 +56,6 @@ public class MovieService {
 
         if (!dto.getOrder().equalsIgnoreCase("asc") && !dto.getOrder().equalsIgnoreCase("desc") && !dto.getOrder().equalsIgnoreCase("default")) return new ResponseApi<>(HttpStatus.BAD_REQUEST, true, "Invalid order");
 
-        return new ResponseApi<>(iMovieRepository.findAllFiltered(dto.getName(), dto.getDirector(), dto.getStartYear(), dto.getEndYear(), dto.getCategory(), dto.getOrder()), HttpStatus.OK, false, "Movies found");
+        return new ResponseApi<>(iMovieRepository.findAllFiltered(dto.getName().toLowerCase(), dto.getDirector().toLowerCase(), dto.getStartYear(), dto.getEndYear(), dto.getCategory(), dto.getOrder()), HttpStatus.OK, false, "Movies found");
     }
 }
